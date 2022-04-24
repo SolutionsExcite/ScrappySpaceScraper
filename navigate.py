@@ -6,8 +6,39 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pathlib import Path
-import time
+
+
+def get_soup(driver, url, css_selector):
+    # load the url into selenium
+    driver.get(url)
+
+    # Wait until async elements are loaded utilizing data-attr whose value is async
+    element = WebDriverWait(driver=driver, timeout=7).until(
+        EC.presence_of_element_located((
+            By.CSS_SELECTOR, css_selector))
+    )
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    return soup
+
+
+def navigate_ships(driver):
+    # Base ships url to loop through pages
+    ships_url = 'https://stfc.space/ships?f=$name=%26faction:-1%26igrade:-1%26irarity:-1%26' \
+                'page:1' \
+                '&s=$ascending:true%26sortBy:0'
+
+    # CSS selector of element with data-attr whose value is async loaded
+    css_loaded_selector = 'a[href^="/ships/"] '
+
+    # get soup, so we start paging and grabbing all the ship ID's
+    soup = get_soup(driver, ships_url, css_loaded_selector)
+    # print(soup.prettify())
+
+    # Grab anchor with href storing specific ship url
+
+
+def navigate_sections(driver):
+    navigate_ships(driver)
 
 
 def navigate_site():
@@ -27,23 +58,10 @@ def navigate_site():
     chrome_options.add_argument("user-data-dir=C:/Users/lenha/AppData/Local/Google/Chrome/"
                                 "User Data/ScrappySpaceScraper")
 
-    # Go to home page initially in case it sets session data there
-    space_url = 'https://stfc.space/ships?f=$name=%26faction:-1%26igrade:-1%26irarity:-1%26' \
-                'page:1' \
-                '&s=$ascending:true%26sortBy:0'
-
     # Create a new instance of the Chrome driver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options,
                               chrome_options=chrome_options)
 
-    # stfc.space
-    driver.get(space_url)
+    navigate_sections(driver)
 
-    # wait for page to load
-    # waiting for: <span class="truncate font-bold">AMALGAM</span>
-    element = WebDriverWait(driver=driver, timeout=5).until(
-        EC.presence_of_element_located((By.CLASS_NAME, 'truncate.font-bold'))
-    )
-    time.sleep(3000)
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-    print(soup.prettify())
+
