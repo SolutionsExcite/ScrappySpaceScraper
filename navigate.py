@@ -24,85 +24,6 @@ def get_soup(driver, url, css_selector):
     return soup
 
 
-def navigate_ship(driver, ship_id):
-    ship_url = stfc_base_url + ship_id
-
-    # load unique ship page.  Selector looks for when tier data is loaded
-    css_loaded_selector = 'td.text-center.px-2.py-2.text-sm.tabular-nums'
-    soup = get_soup(driver, ship_url, css_loaded_selector)
-    return soup
-
-
-def navigate_ships(driver):
-    # Base ships url to loop through pages
-    ship_query_string = 'ships?f=$name=%26faction:-1%26igrade:-1%26irarity:-1%26' \
-                        'page:{current_page}&s=$ascending:true%26sortBy:0'
-    ships_url = stfc_base_url + ship_query_string.format(current_page=1)
-
-    # CSS selector of element with data-attr whose value is async loaded
-    css_loaded_selector = 'a[href^="/ships/"] '
-
-    # get soup, so we start paging and grabbing all the ship ID's
-    soup = get_soup(driver, ships_url, css_loaded_selector)
-
-    # Get visible number of pages
-    css_pages_selector = 'nav a.bg-white'
-    page_tags = soup.select(css_pages_selector)
-
-    # Map to get string. Filter for only numbers.  Place in set to ensure unique values
-    pages = list(set(map(lambda x: x.string, page_tags)))
-    pages.remove(None)
-    pages.sort()
-
-    # Loop over each page scanning all ships on page
-    for page in pages:
-        if page != 1:
-            ships_url = stfc_base_url + ship_query_string.format(current_page=page)
-            # load page
-            soup = get_soup(driver, ships_url, css_loaded_selector)
-
-        # Grab anchor with href storing specific ship url
-        ship_tags = soup.select(css_loaded_selector)
-        for ship_tag in ship_tags:
-            # select value of href (string). [1:] takes the string and returns characters skipping first character
-            navigate_ship(driver, ship_tag['href'][1:])
-
-
-def navigate_officers(driver):
-    # Base ships url to loop through pages
-    officer_query_string = '/officers?f=$name=%26sg:-1%26rarity:-1%26' \
-                           'page:{current_page}&s=$ascending:true%26sortBy:0'
-    officers_url = stfc_base_url + officer_query_string.format(current_page=1)
-
-    # CSS selector of element with data-attr whose value is async loaded
-    css_loaded_selector = 'a[href^="/officers/"] '
-
-    # get soup, so we start paging and grabbing all the ship ID's
-    soup = get_soup(driver, officers_url, css_loaded_selector)
-
-    # Get visible number of pages
-    css_pages_selector = 'nav a.bg-white'
-    page_tags = soup.select(css_pages_selector)
-
-    # Map to get string. Filter for only numbers.  Place in set to ensure unique values
-    pages = list(set(map(lambda x: x.string, page_tags)))
-    pages.remove(None)
-    pages.sort()
-
-    # Loop over each page scanning all ships on page
-    for page in pages:
-        if page != 1:
-            officers_url = stfc_base_url + officer_query_string.format(current_page=page)
-            # load page
-            soup = get_soup(driver, officers_url, css_loaded_selector)
-
-        # Grab anchor with href storing specific ship url
-        officer_tags = soup.select(css_loaded_selector)
-        for ship_tag in officer_tags:
-            # select value of href (string). [1:] takes the string and returns characters skipping first character
-            navigate_ship(driver, ship_tag['href'][1:])
-
-
 def get_navigation_pages(soup):
     # Get visible number of pages
     css_pages_selector = 'nav a.bg-white'
@@ -151,16 +72,35 @@ def navigate_section_pages(driver, query_string, css_page_loaded_selector, css_i
             navigate_section_page_item(driver, item_tag['href'][1:], css_item_loaded_selector)
 
 
-def navigate_sections(driver):
+def navigate_ships_section(driver):
     # Navigate ships section
     query_string = 'ships?f=$name=%26faction:-1%26igrade:-1%26irarity:-1%26' \
-                        'page:{current_page}&s=$ascending:true%26sortBy:0'
+                   'page:{current_page}&s=$ascending:true%26sortBy:0'
+
     # CSS selector of element with data-attr whose value is async loaded for page
-    css_page_loaded_selector = 'a[href^="/ships/"] '
+    css_page_loaded_selector = 'a[href^="/ships/"]'
+
     # CSS selector of element with classes
     css_item_loaded_selector = 'td.text-center.px-2.py-2.text-sm.tabular-nums'
     navigate_section_pages(driver, query_string, css_page_loaded_selector, css_item_loaded_selector)
-    # navigate_ships(driver)
+
+
+def navigate_officers_section(driver):
+    # Navigate ships section
+    query_string = 'officers?f=$name=%26sg:-1%26rarity:-1%26' \
+                           'page:{current_page}&s=$ascending:true%26sortBy:0'
+
+    # CSS selector of element with data-attr whose value is async loaded for page
+    css_page_loaded_selector = 'a[href^="/officers/"]'
+
+    # CSS selector of element with classes
+    css_item_loaded_selector = 'td.text-right.px-1.py-2.text-sm.tabular-nums'
+    navigate_section_pages(driver, query_string, css_page_loaded_selector, css_item_loaded_selector)
+
+
+def navigate_sections(driver):
+    # navigate_ships_section(driver)
+    navigate_officers_section(driver)
 
 
 def navigate_site():
