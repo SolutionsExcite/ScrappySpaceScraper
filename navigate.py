@@ -98,11 +98,26 @@ def navigate_officers_section(driver):
     navigate_section_pages(driver, query_string, css_page_loaded_selector, css_item_loaded_selector)
 
 
+def navigate_hostiles_section(driver):
+    # Navigate ships section
+    query_string = 'hostiles?f=$name=%26level:0%26types@;%26uself:false%26minWarp:1%26maxWarp:600%26faction:-1%26' \
+                   'page:{current_page}&s=$ascending:true%26sortBy:0'
+
+    # CSS selector of element with data-attr whose value is async loaded for page
+    css_page_loaded_selector = 'a[href^="/hostiles/"]'
+
+    # CSS selector of element with classes
+    css_item_loaded_selector = 'h4.font-bold.pb-2.mb-auto'
+    navigate_section_pages(driver, query_string, css_page_loaded_selector, css_item_loaded_selector)
+
+
 def navigate_sections(driver):
     # navigate_ships_section(driver)
-    navigate_officers_section(driver)
+    # navigate_officers_section(driver)
+    navigate_hostiles_section(driver)
 
 
+# figure out why driver is not loading with https
 def navigate_site():
     # configure webdriver
     options = Options()
