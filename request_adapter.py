@@ -1,5 +1,5 @@
 import os
-
+import brotli
 import requests
 from requests_testadapter import Resp
 
@@ -9,11 +9,18 @@ from requests_testadapter import Resp
 class LocalFileAdapter(requests.adapters.HTTPAdapter):
     def build_response_from_file(self, request):
         file_path = request.url[7:]
+
+        with open(file_path, encoding='utf-8-sig', errors='ignore') as f:
+            lines = f.readlines()
+            data = lines[0]
+
         with open(file_path, 'rb') as file:
             buff = bytearray(os.path.getsize(file_path))
             file.readinto(buff)
             resp = Resp(buff)
             r = self.build_response(request, resp)
+
+            data = brotli.decompress(r.content)
 
             return r
 
