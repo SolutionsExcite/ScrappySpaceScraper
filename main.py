@@ -1,13 +1,7 @@
-import json
 from pathlib import Path
-from requests.models import Response
-import gzip
-import brotli
-import brotli_file
 
-import process_cache
-import request_adapter
 import navigate
+import process_cache
 
 # `cwd`: current directory is straightforward (assumes this file location is in root directory)
 project_root = Path.cwd()

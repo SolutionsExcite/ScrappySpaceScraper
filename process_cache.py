@@ -1,25 +1,66 @@
 import json
+import os
 
 
 def process_cache_files():
-    # Get file paths
-    file_path = 'C:/Users/lenha/Desktop/cee89851be302475_01'
-    # Usage:
-    with open(file_path, "rb") as f:
-        content = f.read()
-        content = get_json(content)
+    # Get correct directory
+    directory_path = get_correct_directory()
+
+    directory_items = os.scandir(directory_path)
+    files = filter(lambda x: x.is_file(), directory_items)
+
+    path_to_save = 'C:/Users/lenha/Desktop/stfc-objects/json_objects/test/'
+
+    file_count = 1
+    for file in files:
+        with open(file.path, "rb") as f:
+            content = f.read()
+            json_content = get_json(content)
+            if json_content != '':
+                with open(path_to_save + f'{file_count}.json', "w") as w:
+                    w.write(json.dumps(json_content))
+                    file_count += 1
+
+
+def get_correct_directory():
+    file_path = 'C:/Users/lenha/AppData/Local/Google/Chrome/User Data/ScrappySpaceScraper/' \
+                'Default/Service Worker/CacheStorage/'
+
+    # Find only directories
+    cache = os.scandir(file_path)
+    cache_folder = ''
+    for entry in cache:
+        if entry.is_dir():
+            cache_folder = entry.path
+
+    sub_items = os.scandir(cache_folder + '/')
+    correct_directory_path = ''
+    for entry in sub_items:
+        if entry.is_dir():
+            cache_directories = os.scandir(entry.path)
+
+            _, _, files = next(os.walk(entry.path + '/'))
+            if len(files) > 100:
+                correct_directory_path = entry.path
+                break
+
+    return correct_directory_path
 
 
 def get_json(content):
-    content = content.decode('utf8')
-    content = content.split('\r')[0].split('https:')[1].split('ØA')[0]
-    bracket = content.find('{')
-    brace = content.find('[')
+    content = content.decode('utf8', errors="replace")
+    try:
+        content_part = content.split('https:')[1].split('�A')[0]
+    except IndexError:
+        content_part = ''
+    else:
+        bracket = content_part.find('{')
+        brace = content_part.find('[')
 
-    start_start = brace if brace < bracket else bracket
-    content = content[start_start:]
-    content = json.loads(content)
+        start_start = brace if brace < bracket else bracket
+        content_part = content_part[start_start:]
+        content_part = json.loads(content_part)
 
-    return content
+    return content_part
 
 
