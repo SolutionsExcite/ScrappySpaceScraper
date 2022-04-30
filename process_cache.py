@@ -1,5 +1,6 @@
 import json
-import os
+from collections.abc import Iterator
+from os import DirEntry, scandir, walk
 
 from models.trek_object import TrekObject
 
@@ -8,7 +9,7 @@ def process_cache_files():
     # Get correct directory
     directory_path = get_correct_directory()
 
-    directory_items = os.scandir(directory_path)
+    directory_items = scandir(directory_path)
     files = filter(lambda x: x.is_file(), directory_items)
 
     # path_to_save = 'C:/Users/lenha/Desktop/stfc-objects/json_objects/test/'
@@ -33,17 +34,17 @@ def get_correct_directory():
                 'Default/Service Worker/CacheStorage/'
 
     # Find only directories
-    cache = os.scandir(file_path)
+    cache: Iterator[DirEntry] = scandir(file_path)
     cache_folder = ''
     for entry in cache:
         if entry.is_dir():
             cache_folder = entry.path
 
-    sub_items = os.scandir(cache_folder + '/')
+    sub_items: Iterator[DirEntry] = scandir(cache_folder + '/')
     correct_directory_path = ''
     for entry in sub_items:
         if entry.is_dir():
-            _, _, files = next(os.walk(entry.path + '/'))
+            _, _, files = next(walk(entry.path + '/'))
             if len(files) > 100:
                 correct_directory_path = entry.path
                 break
