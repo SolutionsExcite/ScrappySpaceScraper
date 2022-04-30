@@ -1,7 +1,7 @@
 import json
 from collections.abc import Iterator
 from os import DirEntry, scandir, walk
-from models.trek_object import TrekObject  # type: ignore
+from models.trek_object import TrekObject
 from models.trek_object_type import TrekObjectType
 
 
@@ -29,6 +29,7 @@ def process_cache_files():
             continue
         else:
             write_file(trek_object, file_count)
+            print(f'Files Written: {file_count}  | Files Skipped: {files_skipped}')
 
 
 def write_file(trek_object: TrekObject, file_count: int):
@@ -63,20 +64,3 @@ def get_correct_directory():
                 break
 
     return correct_directory_path
-
-
-def get_json(content):
-    content_content = content.decode('utf8', errors="replace")
-    try:
-        content_part = content_content.split('https:')[1].split('�A')[0]
-    except IndexError:
-        content_part = ''
-    else:
-        bracket = content_part.find('{')
-        brace = content_part.find('[')
-
-        start_start = brace if brace < bracket else bracket
-        content_part = content_part[start_start:]
-        content_part = json.loads(content_part)
-
-    return content_part

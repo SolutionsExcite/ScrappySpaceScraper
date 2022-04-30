@@ -6,7 +6,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-import requests
 
 
 stfc_base_url = 'https://stfc.space/'
@@ -140,5 +139,3 @@ def navigate_site():
                               chrome_options=chrome_options)
 
     navigate_sections(driver)
-
-

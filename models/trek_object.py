@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 
 from models.translation import Translation
 from models.translation_type import TranslationType
@@ -25,7 +26,9 @@ class TrekObject:
     def get_json(self) -> str:
         self.content_string: str = self.content_bytes.decode('utf8', errors="replace")
         try:
-            content_part = self.content_string.split('https:')[1].split('�A')[0]
+            content_parts = self.content_string.split('https:')[1:]
+            content_part = ''.join([str(x) for x in content_parts])
+            content_part = content_part.split('�A')[0]
         except IndexError:
             content_part = ''
         else:
@@ -34,7 +37,11 @@ class TrekObject:
 
             start_start = brace if brace < bracket else bracket
             content_part = content_part[start_start:]
-            content_part = json.loads(content_part)
+
+            try:
+                content_part = json.loads(content_part)
+            except JSONDecodeError:
+                content_part = ''
 
         return content_part
 
@@ -85,5 +92,3 @@ class TrekObject:
         saving_type_list.append(TrekObjectType.Translations)
         saving_type_list.append(TrekObjectType.Officer)
         return saving_type_list
-
-

@@ -10,7 +10,7 @@ project_root = Path.cwd()
 chrome_driver_location = (project_root / 'drivers/chromedriver.exe').resolve()
 
 if __name__ == '__main__':
-    navigate.navigate_site()
+    # navigate.navigate_site()
     process_cache.process_cache_files()
 
     stuff = input('Press any key to continue')
