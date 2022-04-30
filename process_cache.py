@@ -1,6 +1,8 @@
 import json
 import os
 
+from models.trek_object import TrekObject
+
 
 def process_cache_files():
     # Get correct directory
@@ -9,17 +11,21 @@ def process_cache_files():
     directory_items = os.scandir(directory_path)
     files = filter(lambda x: x.is_file(), directory_items)
 
-    path_to_save = 'C:/Users/lenha/Desktop/stfc-objects/json_objects/test/'
+    # path_to_save = 'C:/Users/lenha/Desktop/stfc-objects/json_objects/test/'
 
     file_count = 1
     for file in files:
         with open(file.path, "rb") as f:
-            content = f.read()
-            json_content = get_json(content)
-            if json_content != '':
-                with open(path_to_save + f'{file_count}.json', "w") as w:
-                    w.write(json.dumps(json_content))
-                    file_count += 1
+            trek_object = TrekObject()
+            trek_object.create_model(f.read())
+            # json_content = get_json(content)
+            saving = trek_object.get_saving_types()
+            if trek_object.model == '' or trek_object.trek_object_type not in saving:
+                break
+            with open(trek_object.trek_object_folder_path +
+                      f'{trek_object.trek_object_type.value + file_count}.json', "w") as w:
+                w.write(json.dumps(trek_object.model))
+                file_count += 1
 
 
 def get_correct_directory():
@@ -37,8 +43,6 @@ def get_correct_directory():
     correct_directory_path = ''
     for entry in sub_items:
         if entry.is_dir():
-            cache_directories = os.scandir(entry.path)
-
             _, _, files = next(os.walk(entry.path + '/'))
             if len(files) > 100:
                 correct_directory_path = entry.path
@@ -48,9 +52,9 @@ def get_correct_directory():
 
 
 def get_json(content):
-    content = content.decode('utf8', errors="replace")
+    content_content = content.decode('utf8', errors="replace")
     try:
-        content_part = content.split('https:')[1].split('�A')[0]
+        content_part = content_content.split('https:')[1].split('�A')[0]
     except IndexError:
         content_part = ''
     else:
@@ -62,5 +66,6 @@ def get_json(content):
         content_part = json.loads(content_part)
 
     return content_part
+
 
 
