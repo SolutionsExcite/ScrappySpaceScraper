@@ -28,10 +28,18 @@ def process_cache_files():
             files_skipped += 1
             continue
         else:
-            with open(trek_object.trek_object_folder_path +
-                      f'{trek_object.trek_object_type.value.replace("/","") + str(file_count)}.json', "w") as w:
-                w.write(json.dumps(trek_object.model))
-    stuff = input('Press any key to continue')
+            write_file(trek_object, file_count)
+
+
+def write_file(trek_object: TrekObject, file_count: int):
+    if trek_object.trek_object_type != TrekObjectType.Translations:
+        file_type_name = trek_object.trek_object_type.value.replace("/", "_")
+    else:
+        file_type_name = trek_object.translation.translation_type.value.replace("/", "_")
+
+    with open(trek_object.trek_object_folder_path +
+              f'{file_type_name + str(file_count)}.json', "w") as w:
+        w.write(json.dumps(trek_object.model))
 
 
 def get_correct_directory():

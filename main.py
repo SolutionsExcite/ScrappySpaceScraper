@@ -13,3 +13,5 @@ if __name__ == '__main__':
     navigate.navigate_site()
     process_cache.process_cache_files()
 
+    stuff = input('Press any key to continue')
+

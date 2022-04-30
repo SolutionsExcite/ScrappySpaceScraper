@@ -113,9 +113,9 @@ def navigate_hostiles_section(driver):
 
 
 def navigate_sections(driver):
-    navigate_ships_section(driver)
+    # navigate_ships_section(driver)
     navigate_officers_section(driver)
-    navigate_hostiles_section(driver)
+    # navigate_hostiles_section(driver)
 
 
 # figure out why driver is not loading with https

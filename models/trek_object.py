@@ -1,5 +1,7 @@
 import json
 
+from models.translation import Translation
+from models.translation_type import TranslationType
 from models.trek_object_type import TrekObjectType
 
 
@@ -13,6 +15,7 @@ class TrekObject:
         self.trek_object_folder_path: str = ''
         self.is_translation: bool = False
         self.model: str = ''
+        self.translation: Translation = Translation()
 
     def create_model(self, content: bytes):
         self.content_bytes: bytes = content
@@ -36,6 +39,19 @@ class TrekObject:
         return content_part
 
     def check_type(self):
+        matched_object_type = self.get_trek_object_type()
+        if matched_object_type is not None:
+            self.trek_object_type: TrekObjectType = matched_object_type
+            trek_type_value = TrekObjectType(self.trek_object_type).value
+            self.trek_object_folder_path = self.base_folder_path + trek_type_value
+            self.regex_match = '/v1/' + trek_type_value
+            if self.trek_object_type == TrekObjectType.Translations:
+                # Fill out translation model
+                matched_translation_type = self.get_trek_translation_type()
+                if matched_translation_type is not None:
+                    self.translation.translation_type = matched_translation_type
+
+    def get_trek_object_type(self):
         object_type_list: list[TrekObjectType] = [e for e in TrekObjectType]
 
         def check(object_type: TrekObjectType) -> TrekObjectType:
@@ -45,14 +61,21 @@ class TrekObject:
 
         matched_object_type = list(filter(check, object_type_list))
         if len(matched_object_type) > 0:
-            self.trek_object_type: TrekObjectType = matched_object_type[0]
-            trek_type_value = TrekObjectType(self.trek_object_type).value
-            self.trek_object_folder_path = self.base_folder_path + trek_type_value
-            self.regex_match = '/v1/' + trek_type_value
+            return matched_object_type[0]
+        return None
 
-        # translation_index = self.content.find(TrekObjectType.Translations.value)
-        # if translation_index > 0:
-        #     self.is_translation = True
+    def get_trek_translation_type(self):
+        object_type_list: list[TranslationType] = [e for e in TranslationType]
+
+        def check(object_type: TranslationType) -> TranslationType:
+            index = self.content_string.find('/v1/translations/en/' + object_type.value)
+            if index > 0:
+                return object_type
+
+        matched_object_type = list(filter(check, object_type_list))
+        if len(matched_object_type) > 0:
+            return matched_object_type[0]
+        return None
 
     @staticmethod
     def get_saving_types() -> list[TrekObjectType]:

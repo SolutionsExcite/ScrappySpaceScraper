@@ -7,10 +7,12 @@ class TranslationType(Enum):
 
     Blueprints = 'blueprints/'
     Buildings = 'buildings/'
+    BuildingBuffs = 'building_buffs/'
     Consumables = 'consumables/'
     Factions = 'factions/'
     Hostiles = 'hostiles/'
     Materials = 'materials/'
+    Missiontasks = 'mission_tasks/'
     Missions = 'missions/'
     Officers = 'officers/'
     OfficerDivision = 'officer_division/'
