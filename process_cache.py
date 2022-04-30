@@ -1,32 +1,37 @@
 import json
 from collections.abc import Iterator
 from os import DirEntry, scandir, walk
-
-from models.trek_object import TrekObject
+from models.trek_object import TrekObject  # type: ignore
+from models.trek_object_type import TrekObjectType
 
 
 def process_cache_files():
     # Get correct directory
     directory_path = get_correct_directory()
 
-    directory_items = scandir(directory_path)
-    files = filter(lambda x: x.is_file(), directory_items)
+    directory_items: list[DirEntry] = list(scandir(directory_path))
+    files = list(filter(lambda x: x.is_file(), directory_items))
 
-    # path_to_save = 'C:/Users/lenha/Desktop/stfc-objects/json_objects/test/'
+    file_count = 0
+    files_skipped = 0
+    saving: list[TrekObjectType] = TrekObject.get_saving_types()
 
-    file_count = 1
-    for file in files:
+    for i in range(len(files)):
+        file = files[i]
+        file_count += 1
         with open(file.path, "rb") as f:
-            trek_object = TrekObject()
-            trek_object.create_model(f.read())
-            # json_content = get_json(content)
-            saving = trek_object.get_saving_types()
-            if trek_object.model == '' or trek_object.trek_object_type not in saving:
-                break
+            data = f.read()
+
+        trek_object = TrekObject()
+        trek_object.create_model(data)
+        if trek_object.model == '' or trek_object.trek_object_type not in saving:
+            files_skipped += 1
+            continue
+        else:
             with open(trek_object.trek_object_folder_path +
-                      f'{trek_object.trek_object_type.value + file_count}.json', "w") as w:
+                      f'{trek_object.trek_object_type.value.replace("/","") + str(file_count)}.json', "w") as w:
                 w.write(json.dumps(trek_object.model))
-                file_count += 1
+    stuff = input('Press any key to continue')
 
 
 def get_correct_directory():
@@ -67,6 +72,3 @@ def get_json(content):
         content_part = json.loads(content_part)
 
     return content_part
-
-
-

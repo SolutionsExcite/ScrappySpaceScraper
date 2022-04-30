@@ -1,30 +1,28 @@
 import json
-import typing
-import typing_extensions
 
-from models.translation import Translation
 from models.trek_object_type import TrekObjectType
 
 
 class TrekObject:
     def __init__(self):
+        self.content_string: str = ''
+        self.content_bytes: bytes = bytes()
         self.regex_match: str = ''
         self.base_folder_path: str = 'C:/Users/lenha/Desktop/stfc-objects/json_objects/'
         self.trek_object_type: TrekObjectType = TrekObjectType.Ship
         self.trek_object_folder_path: str = ''
         self.is_translation: bool = False
-        self.content: str = ''
         self.model: str = ''
 
-    def create_model(self, content: any):
-        self.content: any = content
+    def create_model(self, content: bytes):
+        self.content_bytes: bytes = content
         self.model: str = self.get_json()
         self.check_type()
 
     def get_json(self) -> str:
-        self.content = self.content.decode('utf8', errors="replace")
+        self.content_string: str = self.content_bytes.decode('utf8', errors="replace")
         try:
-            content_part = self.content.split('https:')[1].split('�A')[0]
+            content_part = self.content_string.split('https:')[1].split('�A')[0]
         except IndexError:
             content_part = ''
         else:
@@ -41,7 +39,7 @@ class TrekObject:
         object_type_list: list[TrekObjectType] = [e for e in TrekObjectType]
 
         def check(object_type: TrekObjectType) -> TrekObjectType:
-            index = self.content.find('v1/' + object_type.value)
+            index = self.content_string.find('v1/' + object_type.value)
             if index > 0:
                 return object_type
 
@@ -56,7 +54,8 @@ class TrekObject:
         # if translation_index > 0:
         #     self.is_translation = True
 
-    def get_saving_types(self):
+    @staticmethod
+    def get_saving_types() -> list[TrekObjectType]:
         saving_type_list = list()
         saving_type_list.append(TrekObjectType.Ship)
         saving_type_list.append(TrekObjectType.Hostile)
