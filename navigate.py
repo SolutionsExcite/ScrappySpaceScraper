@@ -1,3 +1,5 @@
+import time
+
 from bs4 import BeautifulSoup
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -137,5 +139,7 @@ def navigate_site():
     # Create a new instance of the Chrome driver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options,
                               chrome_options=chrome_options)
+
+    time.sleep(999999)
 
     navigate_sections(driver)

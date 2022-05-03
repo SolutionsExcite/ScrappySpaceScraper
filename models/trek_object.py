@@ -75,7 +75,7 @@ class TrekObject:
         object_type_list: list[TranslationType] = [e for e in TranslationType]
 
         def check(object_type: TranslationType) -> TranslationType:
-            index = self.content_string.find('/v1/translations/en/' + object_type.value)
+            index = self.content_string.find('/v1/translations/en/' + object_type.value.replace("/", ""))
             if index > 0:
                 return object_type
 
