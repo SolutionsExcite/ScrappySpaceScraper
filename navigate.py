@@ -140,6 +140,6 @@ def navigate_site():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options,
                               chrome_options=chrome_options)
 
-    time.sleep(999999)
+    # time.sleep(999999)
 
     navigate_sections(driver)
