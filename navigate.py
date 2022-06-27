@@ -74,6 +74,21 @@ def navigate_section_pages(driver, query_string, css_page_loaded_selector, css_i
             navigate_section_page_item(driver, item_tag['href'][1:], css_item_loaded_selector)
 
 
+def navigate_systems_section(driver):
+    # Navigate ships section
+    query_string = 'systems?f=$name=%26warp:-1%26mining:false%26housing:false%26' \
+                   'missions:false%26minLevel:1%26maxLevel:60%26minWarp:1%26' \
+                   'maxWarp:600%26resources@;%26hostiles@;%26he:false%26me:false%26faction:-1%26' \
+                   'page:{current_page}%26scout:false%26ns:0&s=$ascending:true%26sortBy:1'
+
+    # CSS selector of element with data-attr whose value is async loaded for page
+    css_page_loaded_selector = 'a[href^="/systems/"]'
+
+    # CSS selector of element with classes
+    css_item_loaded_selector = 'span.font-bold.text-xl'
+    navigate_section_pages(driver, query_string, css_page_loaded_selector, css_item_loaded_selector)
+
+
 def navigate_ships_section(driver):
     # Navigate ships section
     query_string = 'ships?f=$name=%26faction:-1%26igrade:-1%26irarity:-1%26' \
@@ -115,8 +130,9 @@ def navigate_hostiles_section(driver):
 
 def navigate_sections(driver):
     # navigate_ships_section(driver)
-    navigate_officers_section(driver)
+    # navigate_officers_section(driver)
     # navigate_hostiles_section(driver)
+    navigate_systems_section(driver)
 
 
 # figure out why driver is not loading with https
