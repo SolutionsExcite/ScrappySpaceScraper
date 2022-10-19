@@ -1,3 +1,5 @@
+import time
+
 from bs4 import BeautifulSoup
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -127,10 +129,12 @@ def navigate_hostiles_section(driver):
 
 
 def navigate_sections(driver):
+    # Comment out code to test individual
+    # Each method utilized below relates to a screen on stfc
+    navigate_officers_section(driver)
     # navigate_ships_section(driver)
-    # navigate_officers_section(driver)
     # navigate_hostiles_section(driver)
-    navigate_systems_section(driver)
+    # navigate_systems_section(driver)
 
 
 # figure out why driver is not loading with https
@@ -147,6 +151,8 @@ def navigate_site():
         # this will disable image loading
         "prefs", {"profile.managed_default_content_settings.images": 2}
     )
+    # This is the file path that chrome driver will utilize as if it were the native app data folder.
+    # This can be changed to anywhere.  Desktop or Documents may be a good first location.
     chrome_options.add_argument("user-data-dir=C:/Users/lenha/AppData/Local/Google/Chrome/"
                                 "User Data/ScrappySpaceScraper")
 
@@ -154,6 +160,6 @@ def navigate_site():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options,
                               chrome_options=chrome_options)
 
-    # time.sleep(999999)
+    time.sleep(5)
 
     navigate_sections(driver)
