@@ -1,5 +1,3 @@
-import time
-
 from bs4 import BeautifulSoup
 from seleniumwire import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -143,7 +141,7 @@ def navigate_site():
     options.add_argument("--window-size=1920,1080")  # set window size to native GUI size
     options.add_argument("start-maximized")  # ensure window is full-screen
 
-    # configure chrome browser to not load images and javascript
+    # configure Chrome browser to not load images and javascript
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option(
         # this will disable image loading
