@@ -5,3 +5,5 @@ beautifulsoup4~=4.11.1
 Brotli~=1.0.9
 mypy~=0.950
 mypy-extensions~=0.4.3
+webdriver-manager~=3.8.4
+selenium-wire~=5.1.0

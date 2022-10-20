@@ -131,6 +131,7 @@ def navigate_hostiles_section(driver):
 def navigate_sections(driver):
     # Comment out code to test individual
     # Each method utilized below relates to a screen on stfc
+
     navigate_officers_section(driver)
     # navigate_ships_section(driver)
     # navigate_hostiles_section(driver)
