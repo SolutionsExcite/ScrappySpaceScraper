@@ -11,6 +11,8 @@ chrome_driver_location = (project_root / 'drivers/chromedriver.exe').resolve()
 
 if __name__ == '__main__':
     navigate.navigate_site()
+    
+    # Uncomment after grabbing data needed.  Only some data required for this to work.
     # process_cache.process_cache_files()
 
     stuff = input('Press any key to continue')
